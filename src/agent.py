@@ -16,9 +16,8 @@ def handle_transaction(transaction_event: TransactionEvent):
         # Maximum number of alerts set to 10 to avoid spamming
         return findings
 
-    # get targeted address
+    # save targeted address
     targeted_address = transaction_event.to
-    ####
 
     try:
         owned_addresses[targeted_address]
@@ -29,14 +28,15 @@ def handle_transaction(transaction_event: TransactionEvent):
 
     # find if transaction calls approve() or increaseAllowance()
     transfer_from_invocations = transaction_event.filter_function(ERC_20_TRANSFER_FROM_FUNCTION_ABI)
-    is_approving_transaction = False
-    ###
-
+    transaction_function = transfer_from_invocations[0]
+    function_name = transaction_function.__name__
+    is_approving_transaction = function_name == 'approve' or function_name == 'increaseAllowance'
+    
     # get timestamp of block and caller address
-    timestamp = 0
-    caller_address = ''
-    ###
-
+    timestamp = transaction_event.timestamp
+    caller_address = transaction_event.from_
+    
+    # 
     if is_approving_transaction:
         address.receive_call(caller_address, timestamp)
 

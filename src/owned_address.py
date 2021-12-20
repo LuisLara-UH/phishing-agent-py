@@ -22,4 +22,4 @@ class OwnedAddress:
                 self.callers.pop(key)
 
     def possible_attack(self) -> bool:
-        return len(self.callers.keys()) > 10
+        return len(self.callers.keys()) > constants.MAXIMUM_CALLERS_ALLOWED
